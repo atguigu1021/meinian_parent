@@ -1,0 +1,12 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.dao.MenuDao">
+
+
+    <select id="getMenusOfRole" resultType="com.atguigu.pojo.Menu">
+        select m.*
+        from t_role_menu r join t_menu m
+        on r.menu_id=m.id
+        where  r.role_id=#{id}
+    </select>
+</mapper>

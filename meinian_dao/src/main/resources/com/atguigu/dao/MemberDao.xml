@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.dao.MemberDao">
+
+    <insert id="add" keyProperty="id" useGeneratedKeys="true">
+        insert into t_member(name,sex,idCard,phoneNumber,regTime)
+        values (#{name},#{sex},#{idCard},#{phoneNumber},#{regTime})
+    </insert>
+
+    <select id="getMember" resultType="com.atguigu.pojo.Member">
+        select * from t_member where phoneNumber=#{telephone}
+    </select>
+    <select id="getMemberCountByMonth" resultType="java.lang.Integer">
+        select  count(*) from t_member where regTime &lt;= #{month}
+    </select>
+    <select id="getTodayNewMember" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_member WHERE regTime = #{date}
+    </select>
+    <select id="getTotalMember" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_member
+    </select>
+    <select id="getThisWeekAndMonthNewMember" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_member WHERE regTime &gt;= #{date}
+    </select>
+</mapper>

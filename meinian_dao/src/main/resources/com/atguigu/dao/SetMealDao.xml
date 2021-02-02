@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.dao.SetMealDao">
+    <insert id="add" parameterType="com.atguigu.pojo.Setmeal" keyProperty="id" useGeneratedKeys="true">
+        insert into t_setmeal(name, code, helpCode, sex, age, price, remark, attention, img)
+        values (#{name}, #{code}, #{helpCode}, #{sex}, #{age}, #{price}, #{remark}, #{attention}, #{img})
+    </insert>
+    <insert id="addTravelGroupToSetMeal">
+        insert into t_setmeal_travelgroup(setmeal_id, travelgroup_id)
+        values (#{setMealId}, #{travelGroupId})
+    </insert>
+    <select id="findPage" resultType="com.atguigu.pojo.Setmeal">
+        select * from t_setmeal
+        <where>
+            <if test="value!=null and value.length>0">
+                code=#{value} or name like concat('%',#{value},'%') or helpCode like concat('%',#{value},'%')
+            </if>
+        </where>
+    </select>
+    <select id="getSetMeal" resultType="com.atguigu.pojo.Setmeal">
+        select * from t_setmeal
+    </select>
+    <select id="findById" resultMap="setMeal">
+        select * from t_setmeal where id=#{id}
+    </select>
+    <select id="getSetMealById" resultType="com.atguigu.pojo.Setmeal">
+        select * from t_setmeal where id=#{id}
+    </select>
+    <select id="getSetMealReport" resultType="java.util.Map">
+        select s.name name,count(s.id) value
+        from t_setmeal s,t_order o where s.id = o.setmeal_id
+        group BY s.name
+    </select>
+    <resultMap id="setMeal" type="com.atguigu.pojo.Setmeal">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="helpCode" column="helpCode"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="price" column="price"/>
+        <result property="remark" column="remark"/>
+        <result property="attention" column="attention"/>
+        <result property="img" column="img"/>
+        <collection property="travelGroups" column="id" select="com.atguigu.dao.TravelGroupDao.getOfSetMeal"/>
+    </resultMap>
+</mapper>

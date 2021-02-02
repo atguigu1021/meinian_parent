@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.dao.OrderDao">
+    <insert id="add" keyProperty="id" useGeneratedKeys="true">
+        insert into t_order(member_id,orderDate,orderType,orderStatus,setmeal_id)
+        values (#{memberId},#{orderDate},#{orderType},#{orderStatus},#{setmealId})
+    </insert>
+
+    <select id="getOrder" resultType="com.atguigu.pojo.Order">
+        select * from t_order
+        <where>
+            <if test="id!=null">
+                id=#{id} and
+            </if>
+            <if test="memberId!=null">
+                member_id=#{memberId} and
+            </if>
+            <if test="orderDate!=null">
+                orderDate=#{orderDate} and
+            </if>
+            <if test="orderType!=null">
+                orderType=#{orderType} and
+            </if>
+            <if test="orderStatus!=null">
+                orderStatus=#{orderStatus} and
+            </if>
+            <if test="setmealId!=null">
+                setmeal_id=#{setmealId}
+            </if>
+        </where>
+    </select>
+    <select id="getOrderById" resultType="java.util.Map">
+        select o.orderDate,o.orderType,m.name member,s.name setMeal
+        from  t_order o,t_member m,t_setmeal s
+        where o.member_id=m.id and o.setmeal_id=s.id and o.id=#{id}
+    </select>
+    <select id="getTodayOrderNumber" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_order WHERE orderDate = #{date}
+    </select>
+    <select id="getTodayVisitsNumber" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_order WHERE orderDate = #{date} AND orderStatus = '已出游'
+    </select>
+    <select id="getThisWeekAndMonthOrderNumber" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_order WHERE orderDate BETWEEN #{begin} AND #{end}
+    </select>
+    <select id="getThisWeekAndMonthVisitsNumber" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_order WHERE orderDate BETWEEN #{begin} AND #{end} AND orderStatus = '已出游'
+    </select>
+    <select id="findHotSetmeal" resultType="java.util.Map">
+        SELECT s.name name,COUNT(s.id) setMeal_count,COUNT(s.id)/(SELECT COUNT(id) FROM t_order) proportion
+        FROM t_setmeal s,t_order o WHERE s.id = o.setmeal_id
+        GROUP BY s.name
+        ORDER BY setmeal_count DESC
+            LIMIT 0,4
+    </select>
+
+</mapper>
